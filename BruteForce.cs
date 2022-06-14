@@ -178,9 +178,9 @@ public sealed class BruteForce : EditorWindow
       var newParams = new List<VRCExpressionParameters.Parameter>();
       newParams.AddRange(exParams.parameters);
 
+      // Add category parameter in VRC expression parameters
       if (additionalCategorySize == 4)
       {
-        // 카테고리 파라미터 추가
         newParams.Add(new VRCExpressionParameters.Parameter
         {
           name = this.categoryName,
@@ -424,7 +424,7 @@ public sealed class BruteForce : EditorWindow
     while (target.parent != null)
       target = target.parent;
 
-    return target == this.avatar.transform;
+    return this.avatar != null && target == this.avatar.transform;
   }
 
   private AnimatorControllerParameterType ChangeValueType(VRCExpressionParameters.ValueType vType) 
