@@ -13,10 +13,6 @@ public sealed class BruteForce : EditorWindow
   private Vector2 scrollPos;
 
   private VRCAvatarDescriptor avatar;
-  private VRCAvatarDescriptor.CustomAnimLayer animLayer;
-  private VRCExpressionParameters avatarParams;
-  private RuntimeAnimatorController targetAnimator;
-  private Animator animator;
 
   private string categoryName;
   private int categoryNum;
