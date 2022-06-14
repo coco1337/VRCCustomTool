@@ -111,7 +111,7 @@ public sealed class BruteForce : EditorWindow
     {
       GUI.backgroundColor = this.partsCheckList[i] ? green : red;
       this.partsList[i] = EditorGUILayout.ObjectField($"Parts {i}", this.partsList[i], typeof(GameObject), true, defaultLayoutOption) as GameObject;
-      this.partsCheckList[i] = this.partsList[i] != null && IsValidParts(i);
+      this.partsCheckList[i] = this.avatar != null && this.partsList[i] != null && IsValidParts(i);
     }
 
     GUI.backgroundColor = white;
@@ -273,6 +273,9 @@ public sealed class BruteForce : EditorWindow
         name = this.animationPrefix,
       };
 
+      AssetDatabase.AddObjectToAsset(stateMachine, this.fxAnimController);
+      stateMachine.hideFlags = HideFlags.HideInHierarchy;
+
       // Make idle state
       var idleState = stateMachine.AddState("Idle");
 
@@ -367,7 +370,7 @@ public sealed class BruteForce : EditorWindow
         UnityEditor.AssetDatabase.CreateAsset(clip, this.generatedAnimationPath + $"/{this.animationPrefix}{i}.anim");
 
         // Attach to idle state in layer
-        idleState.AddTransition(new AnimatorStateTransition()
+        var animStateTransition = new AnimatorStateTransition()
         {
           destinationState = state,
           conditions = conditions.ToArray(),
@@ -376,16 +379,22 @@ public sealed class BruteForce : EditorWindow
           hasFixedDuration = false,
           exitTime = 0,
           duration = 0
-        });
+        };
+
+        idleState.AddTransition(animStateTransition);
+        AssetDatabase.AddObjectToAsset(animStateTransition, this.fxAnimController);
+        animStateTransition.hideFlags = HideFlags.HideInHierarchy;
       }
 
-      // Attach layer to animation controller
-      this.fxAnimController.AddLayer(new AnimatorControllerLayer
+      var animControllerLayer = new AnimatorControllerLayer
       {
         name = this.animationPrefix,
         stateMachine = stateMachine,
         defaultWeight = 1,
-      });
+      };
+
+      // Attach layer to animation controller
+      this.fxAnimController.AddLayer(animControllerLayer);
 
       return true;
     }
@@ -424,7 +433,7 @@ public sealed class BruteForce : EditorWindow
     while (target.parent != null)
       target = target.parent;
 
-    return this.avatar != null && target == this.avatar.transform;
+    return target == this.avatar.transform;
   }
 
   private AnimatorControllerParameterType ChangeValueType(VRCExpressionParameters.ValueType vType) 
