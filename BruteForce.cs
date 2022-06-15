@@ -154,7 +154,7 @@ public sealed class BruteForce : EditorWindow
 
   private bool CheckAndApplyParam()
   {
-    UnityEngine.Object original = new VRCExpressionParameters();
+    UnityEngine.Object original = CreateInstance<VRCExpressionParameters>();
     var exParams = this.avatar.expressionParameters;
     EditorUtility.CopySerialized(exParams, original);
     try
@@ -204,7 +204,8 @@ public sealed class BruteForce : EditorWindow
         });
       }
 
-      this.avatar.expressionParameters.parameters = newParams.ToArray();
+      this.avatar.expressionParameters.parameters = newParams.ToArray();      
+      EditorUtility.SetDirty(this.avatar.expressionParameters);
 
       // find FX animation controller
       var fxAnimationRuntimeController = this.avatar.baseAnimationLayers[4].animatorController;
@@ -226,7 +227,9 @@ public sealed class BruteForce : EditorWindow
     catch (Exception e)
     {
       SetErrorField(e.Message);
-      this.avatar.expressionParameters = (VRCExpressionParameters)original;
+      this.avatar.expressionParameters = (VRCExpressionParameters)original;      
+      EditorUtility.SetDirty(this.avatar.expressionParameters);
+      // TODO : replace to UndoRecord
       return false;
     }    
   }
@@ -284,10 +287,10 @@ public sealed class BruteForce : EditorWindow
       foreach (var part in this.partsList)
       {
         var clipPath = part.name;
-        var tempPart = part.transform;
-        while (tempPart.parent != null)
+        var tempPart = part.transform.parent;
+        while (tempPart.transform != this.avatar.transform)
         {
-          clipPath = tempPart.parent.name + "/" + clipPath;
+          clipPath = tempPart.name + "/" + clipPath;
           tempPart = tempPart.parent;
         }
 
@@ -360,7 +363,7 @@ public sealed class BruteForce : EditorWindow
           // Create and submit animation curve on animation clip
           var curve = new AnimationCurve();
           curve.AddKey(0, GetCurveValue((i & checker) == checker));
-          clip.SetCurve(clipPathList[k], typeof(GameObject), "Is Active", curve);
+          clip.SetCurve(clipPathList[k], typeof(GameObject), "m_IsActive", curve);
         }
 
         // Submit animation clip
