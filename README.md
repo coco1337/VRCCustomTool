@@ -1,4 +1,4 @@
-# VRCCustomTool
+# VRCCustomTool(under construction)
 
 ## Usage
 1. Attach your avatar(avatar must contain VRCDescriptor).
