@@ -51,6 +51,9 @@ public sealed class BruteForce : EditorWindow
   private bool animationPrefixCheck;
   private bool pathCheck;
 
+  // Max count
+  private const int MaxCount = 7;
+
   [MenuItem("coco/BruteForce")]
   private static void Init()
   {
@@ -82,10 +85,10 @@ public sealed class BruteForce : EditorWindow
     this.categoryNum = EditorGUILayout.IntField(this.categoryNum, defaultLayoutOption);
     GUILayout.Space(10);
 
-    GUILayout.Box("Parts, Param count (1 ~ 6)", defaultLayoutOption);
+    GUILayout.Box($"Parts, Param count (1 ~ ${MaxCount})", defaultLayoutOption);
     this.partsCount = EditorGUILayout.IntField(this.partsCount, defaultLayoutOption);
 
-    this.partsCount = Mathf.Min(this.partsCount, 6);
+    this.partsCount = Mathf.Min(this.partsCount, MaxCount);
     this.partsCount = Mathf.Max(this.partsCount, 1);
 
     RefreshList<List<string>, string>(this.paramList, this.partsCount);
